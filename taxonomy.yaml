@@ -1,0 +1,466 @@
+# Board Game Taxonomy
+# Edit this file to update the taxonomy used for AI classification.
+# The app reloads this file on each classification request — no redeploy needed.
+#
+# Structure:
+#   formats: single string per game (the inter-player relationship)
+#   genres: grouped by style; a game may have multiple
+#   mechanisms: grouped by category; a game may have multiple
+
+formats:
+  - name: IPII (Competitive)
+    description: >
+      Beat your opponent(s), and you alone revel in victory. Also used as the
+      default for games with ambiguous or absent inter-player relationships.
+      Exception: if a team victory is recorded but the team is non-coordinative
+      (one player could control the entire team), it is still Competitive.
+  - name: PPII (Competitive Collaboration)
+    description: >
+      Compete against each other, but there's a realistic all-lose condition.
+  - name: PIIP-1 (Cooperative)
+    description: >
+      All players are on the same team and play against the board for a shared
+      victory. Non-coordinative: one player could assume everybody's roles and
+      play solo without any change in the game.
+  - name: PIIP-2 (Cooperative-Coordinative)
+    description: >
+      All players are on the same team and play against the board for a shared
+      victory. Coordinative: one player could NOT assume everybody's roles and
+      play solo.
+  - name: IPPI-K (Semi-Cooperative)
+    description: >
+      A team of players versus one player. The one player plays competitively;
+      the team plays cooperatively with no coordination between teammates.
+  - name: IIPI-K (Partnerships)
+    description: >
+      Teams of players compete with each other for a shared victory. Teams are
+      coordinative — one player could not play for an entire team alone.
+  - name: IPPI-D (Alliances)
+    description: >
+      Cosmic
+  - name: "**P*-H (Hidden Loyalties)"
+    description: >
+      Teams/Partnerships where each player knows only their own team, not
+      others'. Neutral characters with no loyalty are permitted.
+
+genres:
+  entries:
+    - name: Alignment
+      description: Manipulate pieces into specific lines/patterns in order to win.
+    - name: Capture
+      description: >
+        Trap and eliminate your opponent's objective piece through superior
+        deployment and positioning. Pieces have heterogeneous abilities.
+    - name: Attrition
+      description: >
+        Eliminate the most (or all) opponent pieces to win via superior
+        deployment and positioning. Pieces tend to have homogeneous,
+        stackable abilities.
+    - name: Breakout
+      description: >
+        Get your piece(s) to the other side. Opponent actively hinders
+        progress by placing obstacles, capturing pieces, or removing paths.
+    - name: Area Enclosure
+      description: >
+        Surround off areas; you own or score VPs for all areas you enclose.
+    - name: Area Influence
+      description: >
+        Control individual areas/regions (by leaving 1 unit or placing a
+        control token). No resource-management system for introducing new
+        units based on area control.
+    - name: Connection
+      description: Connect two fixed points with a line.
+    - name: Network Building
+      description: >
+        Build networks (interconnected lines with nodes) using owned,
+        partially owned, or neutral pieces, emphasizing the longest chain
+        and/or connecting to new areas.
+    - name: Tile Laying
+      description: >
+        Place a piece and score VPs, with the amount often based on adjacent
+        pieces or cluster membership, keying off non-spatial properties like
+        color, feature completion, or cluster size.
+    - name: Investment
+      description: >
+        Buy into assets of variable value and get them to pay off through
+        game mechanisms. Players have some indirect control over asset values
+        (hard to screw others without hurting yourself).
+    - name: Collusion
+      description: >
+        Buy into assets, but other players have huge direct control over
+        asset values. Rare to win without helping others and being helped;
+        hard to score for yourself without scoring for someone else.
+    - name: Negotiation (Trading)
+      description: >
+        Explicitly involves and encourages trading assets with other players.
+        Winning is rare without participating in deals. Players openly and
+        subjectively determine asset values.
+    - name: Steering
+      description: >
+        Navigate your piece(s) around obstacles which generally stay on the
+        board from the start.
+    - name: Risk Management
+      description: >
+        The main non-incidental player interaction is taking on more/less
+        risk based on standing. The winner usually took the most risk without
+        getting burnt. Risk is driven from mechanisms and random events.
+    - name: Risk Valuation
+      description: >
+        The main non-incidental player interaction is taking on more/less
+        risk based on standing. Risk arises from valuing how much other
+        players want something you also want, and pressing your luck on
+        whether they will take it.
+    - name: Efficiency Engine
+      description: >
+        Continually upgrade your personal mat/deck/play area to progressively
+        ease VP generation. Often involves spending one or several resource
+        types in myriad ways. Gain resources early, VPs late.
+    - name: Payment Timing
+      description: >
+        Collecting and spending only 1 type of primary resource to gain VPs,
+        with no progressively efficient way to obtain more (else Efficiency
+        Engine). The main point is managing when to spend vs. accumulate.
+    - name: Area Majority
+      description: >
+        Have the most (or 2nd/3rd/etc.) pieces in multiple arenas of
+        competition to score VPs.
+    - name: Objectives Race
+      description: Be 1st (or 2nd/3rd/etc.) in accomplishing multiple objectives.
+    - name: Route Optimization
+      description: >
+        Plan and execute an efficient route or path through a network or map
+        to collect resources, complete objectives, or score VPs.
+    - name: Induction
+      description: >
+        Use a set of observations and truthful feedback to derive a general
+        rule out of near-infinite possibilities.
+    - name: Negotiation (Diplomacy)
+      description: >
+        Explicitly involves making deals and alliances of the "I won't screw
+        you if you don't screw me" variety, and backstabbing when appropriate.
+        Winning is rare without participating in these deals.
+    - name: Deduction (Cat/Mouse)
+      description: >
+        Use observations and truthful feedback to narrow down possibilities
+        and catch your opponent at the right position. Opponent moves constantly.
+    - name: Deduction (Elimination)
+      description: >
+        Use observations and truthful feedback to arrive at the right
+        conclusion after narrowing down possibilities from a large list. The
+        conclusion does not evolve.
+    - name: Deduction (Signaling)
+      description: >
+        Use observations and player-driven feedback (which may not be
+        truthful) to arrive at the right conclusion out of 2–3 main choices.
+    - name: Character Development
+      description: >
+        Game revolves around moving and collecting items/equipment that make
+        your character more powerful. Combat element and (often) a health track.
+        Can involve combat and a health track.
+    - name: Territorial Conquest
+      description: >
+        Control individual areas/regions and gain advantages by doing so.
+        Includes a resource-management system for raising more armies using
+        resources collected based on area influence.
+    - name: Tactical War
+      description: >
+        Outmaneuver an opponent (flanking, formations, supply disruption,
+        terrain advantages) rather than massing armies. Limited choice in
+        what pieces to move, often via cards, activations, or wounds.
+    - name: Dexterity
+      description: Involves physical skill and practice.
+    - name: Recognition/Speed
+      description: >
+        Find or recognize sets of cards/tiles that match given criteria
+        before opponents do.
+    - name: Psychological
+      description: >
+        Appeal to the way other players think (literally or figuratively,
+        pictures or words) to get them to guess/choose your clue.
+    - name: Trivia/Word
+      description: Tests and rewards outside knowledge of trivia and/or words.
+
+mechanisms:
+  entries:
+    - name: Spatial Movement (Choice)
+      description: >
+        On your turn, choose one of your pieces to move/activate, either by
+        following its movement rule or spending movement points.
+    - name: Spatial Movement (Single)
+      description: >
+        You have only one piece to move on your turn, and the direction
+        and/or number of spaces is important.
+    - name: Encounter
+      description: >
+        On your turn, move your single piece on the board, then resolve
+        random event(s) or perform a highly random action (including combat).
+    - name: "Spatial Placement (No Rotation, Unrestricted)"
+      description: >
+        Pieces have no rotational orientation and can be placed nearly
+        anywhere on the board, forcing you to consider the whole board.
+    - name: "Spatial Placement (No Rotation, Localized)"
+      description: >
+        Pieces have no rotational orientation and severe restrictions apply
+        on where pieces may be placed (often by adjacency).
+    - name: "Spatial Placement (No Rotation, Card-Driven)"
+      description: >
+        Pieces have no rotational orientation and legal placement locations
+        are limited by the cards you play.
+    - name: "Spatial Placement (With Rotation, Unrestricted)"
+      description: >
+        Pieces may be rotated before being placed and can go nearly anywhere
+        on the board.
+    - name: "Spatial Placement (With Rotation, Localized)"
+      description: >
+        Pieces may be rotated before being placed and severe restrictions
+        apply on placement (often by adjacency).
+    - name: "Spatial Placement (With Rotation, Card-Driven)"
+      description: >
+        Pieces may be rotated before being placed and legal locations are
+        limited by the cards you play.
+    - name: Activation Points
+      description: >
+        Activate/order/command several units consecutively each turn (fixed
+        or variable number), each making one movement or movement+action,
+        before your opponent takes their turn.
+    - name: Spatial Points
+      description: >
+        Allocate finite single-choice actions to pieces for movement or
+        placement, spanning from spreading them equally to spending all on
+        one piece.
+    - name: Forced Move
+      description: >
+        Manipulate pieces into alignments that force your opponent to make a
+        deterministic, often detrimental, move.
+    - name: Pathfinding
+      description: >
+        Manipulate pieces into alignments that allow you to move multiple
+        times at once.
+    - name: Puzzle Mat
+      description: >
+        Each player has a personal space (opponents cannot place on your mat)
+        in which they strategically place, arrange, and usually rotate pieces
+        obtained from a central distribution system. Placement must be non-trivial.
+    - name: Developmental Action
+      description: >
+        Take an action with little/no effect on the spatial board that does
+        not remove or alter opponents' options. Primarily helps yourself;
+        only affects others indirectly.
+    - name: Action Points
+      description: >
+        Take 2 or more consecutive actions per turn, with a similar set of
+        action types to choose from for each. Often involves both spatial
+        and developmental actions.
+    - name: Action Choice Drafting
+      description: >
+        Pick an action from a shared set; that action becomes unavailable,
+        scarcer, or more expensive for others. Resolved immediately.
+    - name: Worker Placement
+      description: >
+        Claim/reserve an action from a shared set; resolved later in a
+        specific order, allowing majority, tile-drafting, and other elements.
+    - name: Simultaneous Action Selection
+      description: >
+        Choose a single action at the same time as opponents, trying to
+        guess/outguess what they will play and match or avoid it.
+    - name: Simultaneous Orders
+      description: >
+        Take several consecutive actions in secret, reveal simultaneously
+        with other players, and resolve in a preset order.
+    - name: Voting
+      description: >
+        Simultaneously reveal your preference/allegiance; votes are tallied
+        and majority gains or loses.
+    - name: Action Choice Cycling
+      description: >
+        The action you take removes it from your menu until you have cycled
+        through a few other actions, rewarding balanced play.
+    - name: Action Choice Timing
+      description: >
+        Get a fixed hand of cards or one-time-only actions and play them in
+        a better order than your opponent. Only one cycle (vs. Cycling).
+    - name: Binary Choice
+      description: >
+        On your turn, choose between two disparate options of the
+        "fight-or-fly" variety — take a risk vs. cut and run. A neutral
+        third choice is permitted.
+    - name: Proposal/Judgment
+      description: >
+        A single player (role often rotated) decides outcomes; others try to
+        sway them. The judge's decision is final.
+    - name: Variable Phase Selection
+      description: >
+        Players select which phase(s) or actions are active this round,
+        giving the active player meaningful control over the game's tempo.
+    - name: Open Auction
+      description: >
+        Place open bids for items. Highest bidder wins. Signaling takes
+        place during the process.
+    - name: Blind Bidding
+      description: >
+        Place closed bids for items. Highest bidder wins. Signaling takes
+        place after bids are revealed.
+    - name: Once-Around Auction
+      description: >
+        Each player bids once in turn order with no second chance. First
+        player is like Blind Bidding; last is like Open Auction.
+    - name: Surplus-Transfer Auction
+      description: >
+        The "winner" must compensate "losers" to gain a contested item.
+        A mix of auction and trading.
+    - name: Trick Taking
+      description: >
+        Highest card (or trump) takes the trick after all players contribute
+        one card to a common pool.
+    - name: Climbing
+      description: >
+        Contribute cards into a common pool; you must beat the previous
+        cards. Last player standing wins the pool.
+    - name: Automatic Hand Refill
+      description: >
+        After playing card(s), your hand refills automatically to its
+        original size. The sole or primary way to obtain more cards.
+    - name: Discard Pool
+      description: >
+        Turns involve discarding a card and refilling from a random draw
+        pile or a common discard pool.
+    - name: Multi-Choice Cards
+      description: >
+        Cards can be used in two or more explicit ways, but you must choose
+        one. The card must explicitly state its multiple uses.
+    - name: Card Drafting
+      description: >
+        Each player looks at a set of cards, picks one, then passes the
+        remainder. Repeat until no cards remain.
+    - name: Tile Drafting
+      description: >
+        Each player takes a turn choosing or buying an asset or long-term
+        special power from a central pool, removing it from the shared menu.
+    - name: Allocation
+      description: >
+        Look at a set of cards (all at once or sequentially) and distribute
+        them among different piles. Opponents often may then choose a pile.
+    - name: Attribute Matching (Cards)
+      description: >
+        Play a card that matches a card on the table by preset criteria
+        (color, number, adjacent value, etc.) without significantly changing
+        the spatial situation.
+    - name: Attribute Matching (Tiles)
+      description: >
+        Recognize that two or more displayed tiles on the table share the
+        same preset attributes.
+    - name: Deck Stacking
+      description: >
+        Gradually alter a set of outcomes so random events favor you more —
+        "stack the deck" — usually by seeding and/or weeding a shared deck.
+    - name: Deck Seeding
+      description: >
+        Add cards to a shared or opponent's deck to alter future random
+        outcomes, typically to introduce negative effects for opponents.
+    - name: Deck Management
+      description: >
+        Build, thin, and manage a personal deck of cards as the primary
+        engine for generating actions and/or resources.
+    - name: Advance Warning
+      description: >
+        Phases have random length, and players are warned in advance of
+        ending — often when the Xth instance of a specific card appears.
+    - name: Customizable Deployment
+      description: >
+        Before the game starts, alter your starting setup based on strategy
+        or to react to opponent threats, with hidden information revealed
+        over the course of the game.
+    - name: Movement/Action Dice
+      description: >
+        Roll dice to determine the action(s) and/or movement(s) you may
+        take. Does not include rolls to determine random results like combat.
+    - name: Multi-Choice Dice
+      description: >
+        Roll dice; results can be used in two or more ways but you must
+        choose one.
+    - name: 3 Dice Attempts
+      description: >
+        Roll a set of dice up to three times, setting aside dice between
+        rolls, to achieve the best possible combination.
+    - name: Upkeep
+      description: >
+        Pay resources at specific, pre-determined intervals. Payments scale
+        with your empire/civilization size. Dire consequences if unable to meet them.
+    - name: Supply and Demand
+      description: >
+        The cost of assets becomes more expensive/cheaper as players
+        buy/sell more of it.
+    - name: Demand Track
+      description: >
+        The VP value of assets is determined centrally by the players and
+        "artificially" induced (vs. Supply and Demand, which is buy/sell-driven).
+    - name: Supply Track
+      description: >
+        Tiles are placed centrally for purchase; if not bought, their price
+        falls or they are removed from the track.
+    - name: Secret Objectives
+      description: >
+        Each player has secret missions that would win the game or give a
+        large midgame/endgame bonus.
+    - name: Variable Turn Order
+      description: >
+        Players can influence the order in which they take turns. Merely
+        changing the start player (same order) does not count.
+    - name: Aging
+      description: Pieces "get older" or decay each turn and may eventually die.
+    - name: Loans (Money)
+      description: >
+        Get money now and pay back a larger amount later, converting
+        efficiently to VPs. Emphasis on loans as a temporary respite.
+    - name: Speculation (VPs)
+      description: >
+        Get VPs now and pay back a larger amount later. Emphasis on tension
+        and ambiguity about whether you can recoup your initial investment.
+    - name: Random Short-Term Objective
+      description: >
+        Players are assigned or draw short-term objectives at random during
+        the game, creating dynamic, unpredictable scoring opportunities.
+    - name: Creative
+      description: >
+        Make up a good story or expression to sway others to your side.
+        Includes acting, drawing, clay sculpting, etc.
+    - name: Guessing
+      description: >
+        Get positive or negative feedback from other player(s) on your
+        answer. There is right and wrong — no gray area.
+    - name: Translation/Interpretation
+      description: >
+        Instruct other players to perform specific actions, but instructions
+        require learning a new language with its own sounds, gestures, etc.
+    - name: Shooting
+      description: Shoot pieces with accuracy and the right strength. Includes flicking.
+    - name: Steady Hands
+      description: >
+        Place/remove pieces slowly and steadily to prevent a structure
+        from collapsing.
+    - name: Betting (Prediction)
+      description: >
+        Predict you will achieve an objective, then try to achieve it, with
+        higher reward and loss dangling over riskier objectives. Opponents
+        can only try to foil you.
+    - name: Betting (Escalation)
+      description: >
+        Place wagers on outcomes; opponents can raise the stakes until
+        players pass. The outcome is nearly pre-determined but only partially
+        known.
+    - name: Deal-Making Phase
+      description: >
+        A special phase set aside for trading goods and/or making deals.
+        Proposed deals usually must involve the active player.
+    - name: Bribery
+      description: >
+        Players may pay resources or VPs to other players to influence their
+        actions or decisions, outside of formal auction or trading structures.
+    - name: Take-That
+      description: >
+        Cards or actions that directly and negatively target another player's
+        position, resources, or pieces.
+    - name: Challenge
+      description: >
+        A player may challenge another's claim or action; the challenged
+        player must prove their claim or face a penalty.
