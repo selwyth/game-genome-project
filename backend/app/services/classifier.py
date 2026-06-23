@@ -78,6 +78,15 @@ You are an expert board game taxonomist. You will be given a rulebook excerpt an
 classify the game strictly using the taxonomy below. Only use values that appear verbatim \
 in the taxonomy — do not invent new categories.
 
+When choosing Genres: focus primarily on sections describing how the game is won or ended — \
+look for headings such as "How to Win", "Game End", "Victory", "Winning the Game", \
+"End of Game", "Scoring", or similar. The win condition is the strongest signal for genre.
+
+When choosing Mechanisms: focus primarily on sections describing turn structure — \
+look for headings such as "Sequence of Play", "Turn Order", "A Player's Turn", \
+"Phase Structure", "Round Summary", or similar. If no such section exists, infer from \
+the general rules how a turn or round is structured.
+
 {taxonomy}
 """
 
