@@ -4,6 +4,13 @@ const BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api
 
 // ── Public ────────────────────────────────────────────────────────────────────
 
+export async function searchGames(q: string): Promise<string[]> {
+  if (!q.trim()) return [];
+  const res = await fetch(`${BASE}/games/search?q=${encodeURIComponent(q)}`);
+  if (!res.ok) return [];
+  return res.json();
+}
+
 export async function lookupGame(name: string): Promise<Game | null> {
   const res = await fetch(`${BASE}/games/lookup?name=${encodeURIComponent(name)}`);
   if (!res.ok) throw new Error(await res.text());

@@ -8,7 +8,7 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
         <Link to="/" className="text-xl font-bold tracking-tight">
-          Board Game Classifier
+          Board Game Taxonomy
         </Link>
         <Link to="/admin" className="text-sm text-slate-500 hover:text-slate-800">
           Admin

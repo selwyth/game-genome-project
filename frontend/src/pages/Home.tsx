@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { lookupGame, classifyGame } from "../api";
+import { lookupGame, classifyGame, searchGames } from "../api";
 import type { Game } from "../types";
 import GameCard from "../components/GameCard";
 
@@ -17,6 +17,10 @@ export default function Home() {
   const [state, setState] = useState<State>({ phase: "idle" });
   const [uploadPassword, setUploadPassword] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activeSuggestion, setActiveSuggestion] = useState(-1);
+  const suggestTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-search when ?game= param is present
   useEffect(() => {
@@ -27,6 +31,43 @@ export default function Home() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams.get("game")]);
+
+  function handleQueryChange(val: string) {
+    setQuery(val);
+    setState({ phase: "idle" });
+    setActiveSuggestion(-1);
+    if (suggestTimeout.current) clearTimeout(suggestTimeout.current);
+    if (!val.trim()) { setSuggestions([]); setShowSuggestions(false); return; }
+    suggestTimeout.current = setTimeout(async () => {
+      const results = await searchGames(val);
+      setSuggestions(results);
+      setShowSuggestions(results.length > 0);
+    }, 200);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (!showSuggestions) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveSuggestion((i) => Math.min(i + 1, suggestions.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveSuggestion((i) => Math.max(i - 1, -1));
+    } else if (e.key === "Enter" && activeSuggestion >= 0) {
+      e.preventDefault();
+      selectSuggestion(suggestions[activeSuggestion]);
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+    }
+  }
+
+  function selectSuggestion(name: string) {
+    setQuery(name);
+    setShowSuggestions(false);
+    setSuggestions([]);
+    setSearchParams({ game: name });
+    doSearch(name);
+  }
 
   async function doSearch(name: string) {
     if (!name.trim()) return;
@@ -62,23 +103,38 @@ export default function Home() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold mb-1">Classify a Board Game</h1>
+        <h1 className="text-3xl font-bold mb-1">Board Game Taxonomy</h1>
         <p className="text-slate-500">
           Look up any game to see its format, genres, and mechanisms.
         </p>
       </div>
 
       <form onSubmit={handleSearch} className="flex gap-2">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setState({ phase: "idle" });
-          }}
-          placeholder="e.g. Pandemic"
-          className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="relative flex-1">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => handleQueryChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+            placeholder="e.g. Pandemic"
+            className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {showSuggestions && (
+            <ul className="absolute z-10 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg text-sm overflow-hidden">
+              {suggestions.map((name, i) => (
+                <li
+                  key={name}
+                  onMouseDown={() => selectSuggestion(name)}
+                  className={`px-4 py-2.5 cursor-pointer ${i === activeSuggestion ? "bg-blue-50 text-blue-700" : "hover:bg-slate-50"}`}
+                >
+                  {name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         <button
           type="submit"
           disabled={state.phase === "classifying"}

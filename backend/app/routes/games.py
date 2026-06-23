@@ -46,6 +46,20 @@ def get_taxonomy_route():
     )
 
 
+@router.get("/search", response_model=list[str])
+def search_games(q: str, db: Session = Depends(get_db)):
+    if not q.strip():
+        return []
+    results = (
+        db.query(Game.name)
+        .filter(Game.name.ilike(f"%{q.strip()}%"))
+        .order_by(Game.name)
+        .limit(10)
+        .all()
+    )
+    return [r[0] for r in results]
+
+
 @router.get("/lookup", response_model=GameOut | None)
 def lookup(name: str, db: Session = Depends(get_db)):
     game = db.query(Game).filter(Game.name.ilike(name.strip())).first()
