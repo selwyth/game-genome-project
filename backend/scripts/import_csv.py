@@ -64,12 +64,12 @@ def parse_row(row: dict) -> dict | None:
     }
 
 
-def run(csv_path: str):
+def run(csv_path: str, upsert: bool = False):
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
-        existing = {g.name.lower() for g in db.query(Game.name).all()}
-        inserted = skipped = 0
+        existing = {g.name.lower(): g for g in db.query(Game).all()}
+        inserted = updated = skipped = 0
 
         with open(csv_path, newline="", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
@@ -77,15 +77,29 @@ def run(csv_path: str):
                 data = parse_row(row)
                 if not data:
                     continue
-                if data["name"].lower() in existing:
-                    skipped += 1
+                key = data["name"].lower()
+                if key in existing:
+                    if upsert:
+                        game = existing[key]
+                        game.bgg_id = data["bgg_id"]
+                        game.game_format = data["game_format"]
+                        game.genres = data["genres"]
+                        game.mechanisms = data["mechanisms"]
+                        game.verified = data["verified"]
+                        updated += 1
+                    else:
+                        skipped += 1
                     continue
-                db.add(Game(**data))
-                existing.add(data["name"].lower())
+                game = Game(**data)
+                db.add(game)
+                existing[key] = game
                 inserted += 1
 
         db.commit()
-        print(f"Imported {inserted} games, skipped {skipped} duplicates.")
+        if upsert:
+            print(f"Imported {inserted} new, updated {updated} existing games.")
+        else:
+            print(f"Imported {inserted} games, skipped {skipped} duplicates.")
     finally:
         db.close()
 
@@ -93,5 +107,6 @@ def run(csv_path: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--csv", required=True, help="Path to gamelist CSV")
+    parser.add_argument("--upsert", action="store_true", help="Update existing games instead of skipping them")
     args = parser.parse_args()
-    run(args.csv)
+    run(args.csv, upsert=args.upsert)
