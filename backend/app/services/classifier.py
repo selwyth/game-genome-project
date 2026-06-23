@@ -17,12 +17,52 @@ _TOOL = {
             "genres": {
                 "type": "array",
                 "items": {"type": "string"},
-                "description": "One or more genre names from the taxonomy.",
+                "description": (
+                    "The top 3 most representative genre names from the taxonomy. "
+                    "If more genres apply, list the remainder in additional_genres."
+                ),
+                "maxItems": 3,
+            },
+            "additional_genres": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": (
+                    "Further genres from the taxonomy that apply beyond the top 3. "
+                    "Leave empty if none."
+                ),
+            },
+            "proposed_genres": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": (
+                    "Genre labels NOT in the taxonomy that you believe should exist. "
+                    "Leave empty if none."
+                ),
             },
             "mechanisms": {
                 "type": "array",
                 "items": {"type": "string"},
-                "description": "One or more mechanism names from the taxonomy.",
+                "description": (
+                    "The top 5 most important mechanism names from the taxonomy. "
+                    "If more mechanisms apply, list the remainder in additional_mechanisms."
+                ),
+                "maxItems": 5,
+            },
+            "additional_mechanisms": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": (
+                    "Further mechanisms from the taxonomy that apply beyond the top 5. "
+                    "Leave empty if none."
+                ),
+            },
+            "proposed_mechanisms": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": (
+                    "Mechanism labels NOT in the taxonomy that you believe should exist. "
+                    "Leave empty if none."
+                ),
             },
             "rationale": {
                 "type": "string",
@@ -62,12 +102,44 @@ def classify(game_name: str, rulebook_text: str) -> dict:
 
     for block in response.content:
         if block.type == "tool_use" and block.name == "classify_game":
-            result = block.input
-            # Validate values against taxonomy; keep only recognized ones
-            result["game_format"] = _validate_one(result.get("game_format"), format_names())
-            result["genres"] = _validate_list(result.get("genres", []), genre_names())
-            result["mechanisms"] = _validate_list(result.get("mechanisms", []), mechanism_names())
-            return result
+            inp = block.input
+
+            # Validate primary tags against taxonomy
+            game_format = _validate_one(inp.get("game_format"), format_names())
+            genres = _validate_list(inp.get("genres", [])[:3], genre_names())
+            mechanisms = _validate_list(inp.get("mechanisms", [])[:5], mechanism_names())
+
+            # Build rationale, appending overflow and proposed tags
+            rationale_parts = [inp.get("rationale", "").strip()]
+
+            additional_genres = _validate_list(inp.get("additional_genres", []), genre_names())
+            additional_mechanisms = _validate_list(inp.get("additional_mechanisms", []), mechanism_names())
+            proposed_genres = [g.strip() for g in inp.get("proposed_genres", []) if g.strip()]
+            proposed_mechanisms = [m.strip() for m in inp.get("proposed_mechanisms", []) if m.strip()]
+
+            if additional_genres:
+                rationale_parts.append(
+                    f"Additional genres that also apply: {', '.join(additional_genres)}."
+                )
+            if additional_mechanisms:
+                rationale_parts.append(
+                    f"Additional mechanisms that also apply: {', '.join(additional_mechanisms)}."
+                )
+            if proposed_genres:
+                rationale_parts.append(
+                    f"Proposed new genres not yet in taxonomy: {', '.join(proposed_genres)}."
+                )
+            if proposed_mechanisms:
+                rationale_parts.append(
+                    f"Proposed new mechanisms not yet in taxonomy: {', '.join(proposed_mechanisms)}."
+                )
+
+            return {
+                "game_format": game_format,
+                "genres": genres,
+                "mechanisms": mechanisms,
+                "rationale": " ".join(rationale_parts),
+            }
 
     raise RuntimeError("Claude did not return a classify_game tool call")
 
@@ -75,7 +147,6 @@ def classify(game_name: str, rulebook_text: str) -> dict:
 def _validate_one(value: str | None, valid: list[str]) -> str | None:
     if value in valid:
         return value
-    # Try case-insensitive match
     lower = {v.lower(): v for v in valid}
     return lower.get((value or "").lower())
 
