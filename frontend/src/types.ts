@@ -13,6 +13,11 @@ export interface Game {
   updated_at?: string;
 }
 
+export interface SimilarGame {
+  game: Game;
+  score: number;
+}
+
 export interface PaginatedGames {
   total: number;
   page: number;

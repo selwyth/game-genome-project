@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import type { Game } from "../types";
+import type { Game, SimilarGame } from "../types";
 import { getSimilarGames } from "../api";
 import VerifiedBadge from "./VerifiedBadge";
 
 export default function GameCard({ game }: { game: Game }) {
-  const [similar, setSimilar] = useState<Game[] | null>(null);
+  const [similar, setSimilar] = useState<SimilarGame[] | null>(null);
 
   useEffect(() => {
     setSimilar(null);
@@ -53,8 +53,8 @@ export default function GameCard({ game }: { game: Game }) {
           <p className="text-xs text-slate-400">None found.</p>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {similar.map((g) => (
-              <SimilarGameChip key={g.id} game={g} />
+            {similar.map(({ game: g, score }) => (
+              <SimilarGameChip key={g.id} game={g} score={score} />
             ))}
           </div>
         )}
@@ -63,14 +63,15 @@ export default function GameCard({ game }: { game: Game }) {
   );
 }
 
-function SimilarGameChip({ game }: { game: Game }) {
+function SimilarGameChip({ game, score }: { game: Game; score: number }) {
   const navigate = useNavigate();
   return (
     <button
       onClick={() => navigate(`/?game=${encodeURIComponent(game.name)}`)}
-      className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100"
+      className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700 hover:bg-slate-100 flex items-center gap-1.5"
     >
       {game.name}
+      <span className="text-slate-400">{Math.round(score * 100)}%</span>
     </button>
   );
 }

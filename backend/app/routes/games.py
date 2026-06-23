@@ -96,7 +96,15 @@ def tag_detail(tag_type: str, tag_name: str, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/{game_id}/similar", response_model=list[GameOut])
+class SimilarGameOut(BaseModel):
+    game: GameOut
+    score: float
+
+    class Config:
+        from_attributes = True
+
+
+@router.get("/{game_id}/similar", response_model=list[SimilarGameOut])
 def similar_games(game_id: int, db: Session = Depends(get_db)):
     game = db.get(Game, game_id)
     if not game:
@@ -120,7 +128,7 @@ def similar_games(game_id: int, db: Session = Depends(get_db)):
             scored.append((jaccard, g))
 
     scored.sort(key=lambda x: -x[0])
-    return [g for _, g in scored[:5]]
+    return [SimilarGameOut(game=g, score=round(jaccard, 2)) for jaccard, g in scored[:5]]
 
 
 @router.post("/classify", response_model=GameOut)

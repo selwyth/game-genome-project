@@ -1,4 +1,4 @@
-import type { Game, PaginatedGames, TagDetail, Taxonomy } from "./types";
+import type { Game, SimilarGame, PaginatedGames, TagDetail, Taxonomy } from "./types";
 
 const BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : "/api";
 
@@ -36,7 +36,7 @@ export async function getTaxonomy(): Promise<Taxonomy> {
   return res.json();
 }
 
-export async function getSimilarGames(gameId: number): Promise<Game[]> {
+export async function getSimilarGames(gameId: number): Promise<SimilarGame[]> {
   const res = await fetch(`${BASE}/games/${gameId}/similar`);
   if (!res.ok) throw new Error(await res.text());
   return res.json();
