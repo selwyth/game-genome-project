@@ -37,6 +37,7 @@ formats:
       if there is a one-player team, but the teams are hidden and/or not
       pre-determined.
   - name: PPP (Self-Actualization)
+    description: >
       Players work on their own goals, and whoever achieves theirs wins,
       no matter how many.
 
