@@ -24,18 +24,6 @@ COLUMNS = [
     "Verified", "AI_Rationale",
 ]
 
-# Reverse of import_csv FORMAT_MAP
-FORMAT_REVERSE = {
-    "IPII (Competitive)": "IPII",
-    "PPII (Competitive Collaboration)": "PPII",
-    "PIIP-1 (Cooperative)": "PIIP-1",
-    "PIIP-2 (Cooperative-Coordinative)": "PIIP-2",
-    "IPPI-K (Semi-Cooperative)": "IPPI-K",
-    "IIPI-K (Partnerships)": "IIPI-K",
-    "IPPI-D (Alliances)": "IPPI-D",
-    "**P*-H (Hidden Loyalties)": "**P*-H",
-}
-
 
 def run(out_path: str):
     db = SessionLocal()
@@ -50,7 +38,7 @@ def run(out_path: str):
                 writer.writerow({
                     "Game_ID": g.bgg_id or "",
                     "Name": g.name,
-                    "GameFormat": FORMAT_REVERSE.get(g.game_format or "", g.game_format or ""),
+                    "GameFormat": g.game_format or "",
                     "Genre1": genres[0] if len(genres) > 0 else "",
                     "Genre2": genres[1] if len(genres) > 1 else "",
                     "Genre3": genres[2] if len(genres) > 2 else "",

@@ -2,11 +2,12 @@
 Import games from the GGP CSV into the database.
 
 Usage (from backend/):
-    python -m scripts.import_csv --csv /path/to/gamelist.csv
+    python -m scripts.import_csv --csv /path/to/gamelist.csv [--upsert]
 
 Games with at least one genre or mechanism are imported as verified=True.
 Games with no classifications are imported as verified=False with nulls.
-Duplicate names (case-insensitive) are skipped.
+Duplicate names (case-insensitive) are skipped unless --upsert is passed.
+GameFormat values must match taxonomy.yaml format names exactly.
 """
 import argparse
 import csv
@@ -17,22 +18,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app.database import SessionLocal, Base, engine
 from app.models import Game
-
-# Map CSV GameFormat codes to the taxonomy's full format names
-FORMAT_MAP = {
-    "IPII": "IPII (Competitive)",
-    "PPII": "PPII (Competitive Collaboration)",
-    "PIIP-1": "PIIP-1 (Cooperative)",
-    "PIIP-2": "PIIP-2 (Cooperative-Coordinative)",
-    "IPPI-K": "IPPI-K (Semi-Cooperative)",
-    "IIPI-K": "IIPI-K (Partnerships)",
-    "IPPI-D": "IPPI-D (Alliances)",
-    "PPPI-D": "IPPI-D (Alliances)",
-    "**P*-H": "**P*-H (Hidden Loyalties)",
-}
+from app.taxonomy import format_names
 
 
-def parse_row(row: dict) -> dict | None:
+def parse_row(row: dict, valid_formats: set[str]) -> dict | None:
     name = row.get("Name", "").strip()
     if not name:
         return None
@@ -40,8 +29,11 @@ def parse_row(row: dict) -> dict | None:
     bgg_id_raw = row.get("Game_ID", "").strip()
     bgg_id = int(bgg_id_raw) if bgg_id_raw.isdigit() else None
 
-    fmt_code = row.get("GameFormat", "").strip()
-    game_format = FORMAT_MAP.get(fmt_code) if fmt_code else None
+    fmt = row.get("GameFormat", "").strip()
+    if fmt and fmt not in valid_formats:
+        print(f"  WARNING: unknown GameFormat '{fmt}' for '{name}' — skipping format.")
+        fmt = None
+    game_format = fmt or None
 
     genres = [
         v.strip() for k in ["Genre1", "Genre2", "Genre3", "Genre4", "Genre5"]
@@ -68,13 +60,14 @@ def run(csv_path: str, upsert: bool = False):
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
+        valid_formats = set(format_names())
         existing = {g.name.lower(): g for g in db.query(Game).all()}
         inserted = updated = skipped = 0
 
         with open(csv_path, newline="", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                data = parse_row(row)
+                data = parse_row(row, valid_formats)
                 if not data:
                     continue
                 key = data["name"].lower()
