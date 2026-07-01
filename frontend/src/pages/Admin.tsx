@@ -18,6 +18,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [editing, setEditing] = useState<Game | null>(null);
+  const [creating, setCreating] = useState(false);
 
   const PAGE_SIZE = 50;
 
@@ -60,12 +61,15 @@ export default function Admin() {
   }
 
   function handleGameSaved(updated: Game) {
-    setData((prev) =>
-      prev
-        ? { ...prev, items: prev.items.map((g) => (g.id === updated.id ? updated : g)) }
-        : prev
-    );
-    setEditing(updated);
+    if (creating) {
+      setData((prev) => prev ? { ...prev, total: prev.total + 1, items: [updated, ...prev.items] } : prev);
+      setCreating(false);
+    } else {
+      setData((prev) =>
+        prev ? { ...prev, items: prev.items.map((g) => (g.id === updated.id ? updated : g)) } : prev
+      );
+      setEditing(updated);
+    }
   }
 
   if (!authed) {
@@ -98,12 +102,20 @@ export default function Admin() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Game Admin</h1>
-        <button
-          onClick={() => { sessionStorage.removeItem(TOKEN_KEY); setAuthed(false); setToken(""); }}
-          className="text-sm text-slate-500 hover:text-slate-800"
-        >
-          Sign out
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setCreating(true)}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            + Add Game
+          </button>
+          <button
+            onClick={() => { sessionStorage.removeItem(TOKEN_KEY); setAuthed(false); setToken(""); }}
+            className="text-sm text-slate-500 hover:text-slate-800"
+          >
+            Sign out
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -210,6 +222,16 @@ export default function Admin() {
           game={editing}
           token={token}
           onClose={() => setEditing(null)}
+          onSaved={handleGameSaved}
+        />
+      )}
+
+      {/* Create modal */}
+      {creating && (
+        <EditGameModal
+          game={null}
+          token={token}
+          onClose={() => setCreating(false)}
           onSaved={handleGameSaved}
         />
       )}

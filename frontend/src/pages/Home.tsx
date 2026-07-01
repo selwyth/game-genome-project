@@ -16,6 +16,7 @@ export default function Home() {
   const [query, setQuery] = useState(searchParams.get("game") ?? "");
   const [state, setState] = useState<State>({ phase: "idle" });
   const [uploadPassword, setUploadPassword] = useState("");
+  const [bggId, setBggId] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -93,7 +94,7 @@ export default function Home() {
     if (!file) return;
     setState({ phase: "classifying" });
     try {
-      const game = await classifyGame(state.name, file, uploadPassword || undefined);
+      const game = await classifyGame(state.name, Number(bggId), file, uploadPassword || undefined);
       setState({ phase: "done", game });
     } catch (err: unknown) {
       setState({ phase: "error", message: String(err) });
@@ -151,6 +152,14 @@ export default function Home() {
             to classify it.
           </p>
           <form onSubmit={handleUpload} className="flex flex-col gap-3">
+            <input
+              type="number"
+              placeholder="BGG ID (required)"
+              value={bggId}
+              onChange={(e) => setBggId(e.target.value)}
+              required
+              className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
             <input
               ref={fileRef}
               type="file"

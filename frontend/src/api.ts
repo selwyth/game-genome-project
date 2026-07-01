@@ -17,9 +17,10 @@ export async function lookupGame(name: string): Promise<Game | null> {
   return res.json();
 }
 
-export async function classifyGame(name: string, rulebook: File, uploadPassword?: string): Promise<Game> {
+export async function classifyGame(name: string, bggId: number, rulebook: File, uploadPassword?: string): Promise<Game> {
   const body = new FormData();
   body.append("name", name);
+  body.append("bgg_id", String(bggId));
   body.append("rulebook", rulebook);
   if (uploadPassword) body.append("upload_password", uploadPassword);
   const res = await fetch(`${BASE}/games/classify`, { method: "POST", body });
@@ -68,6 +69,22 @@ export async function adminListGames(
   });
   if (res.status === 401) throw new Error("unauthorized");
   if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function adminCreateGame(
+  token: string,
+  data: { name: string; bgg_id: number; game_format?: string | null; genres?: string[]; mechanisms?: string[] }
+): Promise<Game> {
+  const res = await fetch(`${BASE}/admin/games`, {
+    method: "POST",
+    headers: adminHeaders(token),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const detail = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(detail.detail ?? res.statusText);
+  }
   return res.json();
 }
 

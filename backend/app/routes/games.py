@@ -134,6 +134,7 @@ def similar_games(game_id: int, db: Session = Depends(get_db)):
 @router.post("/classify", response_model=GameOut)
 async def classify_game(
     name: str = Form(...),
+    bgg_id: int = Form(...),
     rulebook: UploadFile = File(...),
     upload_password: str = Form(default=""),
     db: Session = Depends(get_db),
@@ -160,6 +161,7 @@ async def classify_game(
 
     game = Game(
         name=name,
+        bgg_id=bgg_id,
         game_format=result.get("game_format"),
         genres=result.get("genres"),
         mechanisms=result.get("mechanisms"),
