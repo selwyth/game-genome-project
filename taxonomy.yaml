@@ -8,40 +8,37 @@
 #   mechanisms: grouped by category; a game may have multiple
 
 formats:
-  - name: IPII (Competitive)
+  - name: PII (Competitive)
     description: >
       Beat your opponent(s), and you alone revel in victory. Also used as the
       default for games with ambiguous or absent inter-player relationships.
-      Exception: if a team victory is recorded but the team is non-coordinative
-      (one player could control the entire team), it is still Competitive.
-  - name: PPII (Competitive Collaboration)
+  - name: IPI (Teams/Partnerships)
     description: >
-      Compete against each other, but there's a realistic all-lose condition.
-  - name: PIIP-1 (Cooperative)
+      Teams of players compete with each other for a shared victory. This also
+      includes Team/All vs 1, even though one player technically can win. The
+      existence of one team (that isn't all the players) is sufficient.
+  - name: IIP (Cooperative)
     description: >
       All players are on the same team and play against the board for a shared
       victory. Non-coordinative: one player could assume everybody's roles and
       play solo without any change in the game.
-  - name: PIIP-2 (Cooperative-Coordinative)
+  - name: IIP-C (Coordinative)
     description: >
       All players are on the same team and play against the board for a shared
       victory. Coordinative: one player could NOT assume everybody's roles and
       play solo.
-  - name: IPPI-K (Semi-Cooperative)
+  - name: PPI (Shared Victory)
     description: >
-      A team of players versus one player. The one player plays competitively;
-      the team plays cooperatively with no coordination between teammates.
-  - name: IIPI-K (Partnerships)
+      Competitive, but some players might get chances during the game to
+      formally form a team with other player(s) and win/lose together.
+  - name: IPI-H (Hidden Teams)
     description: >
-      Teams of players compete with each other for a shared victory. Teams are
-      coordinative — one player could not play for an entire team alone.
-  - name: IPPI-D (Alliances)
-    description: >
-      Cosmic
-  - name: "**P*-H (Hidden Loyalties)"
-    description: >
-      Teams/Partnerships where each player knows only their own team, not
-      others'. Neutral characters with no loyalty are permitted.
+      Teams of players compete with each other for a shared victory, including
+      if there is a one-player team, but the teams are hidden and/or not
+      pre-determined.
+  - name: PPP (Self-Actualization)
+      Players work on their own goals, and whoever achieves theirs wins,
+      no matter how many.
 
 genres:
   entries:
