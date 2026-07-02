@@ -91,7 +91,7 @@ export async function adminCreateGame(
 export async function adminUpdateGame(
   token: string,
   id: number,
-  data: { game_format?: string | null; genres?: string[]; mechanisms?: string[] }
+  data: { name?: string; bgg_id?: number; game_format?: string | null; genres?: string[]; mechanisms?: string[] }
 ): Promise<Game> {
   const res = await fetch(`${BASE}/admin/games/${id}`, {
     method: "PUT",
